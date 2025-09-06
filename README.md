@@ -11,6 +11,7 @@ LayerPeeler is a framework for layer-wise image vectorization that decomposes im
 
 ## Updates
 - [ ] Dataset Released
+- [ ] Training Code Released
 - [ ] Layer Graph Generation Released
 - [ ] Image Diffusion Model Released
 - [ ] Vectorization Tools Released
