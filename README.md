@@ -29,8 +29,6 @@ pip install -r requirements.txt
 ### 2. Merge the Pretrained Model
 As described in the paper, we use a pretrained LoRA model trained on the `SeedEdit` dataset. You must merge this pretrained LoRA with the base model before training. 
 
-*If you have already performed this merge during inference, you can skip this step.*
-
 ```bash
 python merge_pretrain.py
 ```
