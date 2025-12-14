@@ -25,3 +25,5 @@ accelerate
 peft==0.15.2
 datasets
 wandb
+dotenv
+graphviz

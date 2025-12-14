@@ -156,4 +156,3 @@ cython_debug/
 outputs
 wandb
 PhotoDoodle_Pretrain
-data

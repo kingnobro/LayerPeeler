@@ -7,13 +7,13 @@
 
 ## Overview
 
-LayerPeeler is a framework for layer-wise image vectorization that decomposes images into structured vector representations. The system uses a vision-language model to analyze the image and construct a hierarchical layer graph, identifying the topmost visual elements. These detected elements are then processed by a fine-tuned image diffusion model to generate clean background images with the specified elements removed, enabling precise layer-by-layer vectorization.
+LayerPeeler is a framework for layer-wise image vectorization that decomposes images into structured vector representations. The system uses a vision-language model (VLM) to analyze an input image and construct a hierarchical layer graph by identifying topmost visual elements. These detected elements are then passed to a fine-tuned image diffusion model, which generates clean background images with the specified elements removed. This process enables precise, layer-by-layer vectorization.
 
 ## Updates
 - [x] **[2025.12.11]**: Dataset Released
-- [x] **[2025.12.11]**: Training Code Released
-- [ ] Inference Code Released
-- [ ] Vectorization Released
+- [x] **[2025.12.11]**: Training Code Released 
+- [x] **[2025.12.14]**: Inference Code Released
+- [ ] Vectorization Code Released
 
 ## Setup
 
@@ -24,19 +24,63 @@ conda activate layerpeeler
 
 pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu124
 pip install -r requirements.txt
-```
+````
 
 ### 2. Merge the Pretrained Model
-As described in the paper, we use a pretrained LoRA model trained on the `SeedEdit` dataset. You must merge this pretrained LoRA with the base model before training. 
+
+As described in the paper, we use a pretrained LoRA model trained on the `SeedEdit` dataset. Before training or inference, you must merge this LoRA checkpoint with the base model.
 
 ```bash
 python merge_pretrain.py
 ```
-> [!TIP]  
-> You can update the path to the pretrained model inside `merge_pretrain.py` if necessary.
+
+> [!TIP]
+> You can update the path to the pretrained model inside `merge_pretrain.py` if needed.
 
 ## Inference
-TBD
+
+The inference code is located in the [`inference`](./inference) directory.
+
+### 1. Gemini API Setup
+
+> [!CAUTION]
+> Gemini is not accessible in Hong Kong. Therefore, we use a third-party API from [V-API](https://api.v3.cm/) to forward requests to Gemini. If you are in a region with direct access to Gemini, you can modify the `BASE_URL` (line 26) in `inference/utils/vlm_util.py` to use the official Gemini API. Additional changes may be required. We apologize for the inconvenience.
+
+Paste your Gemini API key into the `.env` file:
+
+```shell
+GEMINI_API_KEY=<your_key>
+```
+
+### 2. Test Set
+
+We provide a test set containing 250 images (with corresponding ground-truth SVG files) in the [`data`](./data) directory. The inference script processes all images in this set.
+
+### 3. Inference Scripts
+
+Run the inference script **without attention control**:
+
+```bash
+bash inference.sh
+```
+
+If you have full access to Gemini, you can run the inference script **with attention control**:
+
+```bash
+bash inference_attn.sh
+```
+
+> [!IMPORTANT]
+>
+> 1. **LoRA Weights**: The LoRA weights are hosted on Hugging Face: [LayerPeeler](https://huggingface.co/kingno/LayerPeeler/tree/main). They will be downloaded automatically during inference.
+> 2. **Attention Control**: When using V-API to access Gemini, we found bounding box and mask detection to be unstable. As a result, `inference.sh` does not use the attention control mechanism described in the paper.
+> 3. **Output**: Results are saved in the `outputs` directory, including the VLM responses, layer graphs, and generated images in their respective subdirectories.
+> 4. **VLM Model**: We use Gemini 2.5 Pro for VLM reasoning because it provides reliable mask and bounding box detection. If attention control is disabled, other VLM models may also be suitable.
+
+### Limitations
+
+For complex input images (e.g., those with multiple top layers to remove), the inference script may fail to produce the desired output. In such cases, trying different random seeds and inference steps may help.
 
 ## Training
-You can find the training code and dataset in the [`train`](./train) directory, and detailed training instructions in the corresponding [`README`](./train/README.md) file.
+
+The training code and dataset are available in the [`train`](./train) directory. Detailed training instructions can be found in the corresponding [`README`](./train/README.md).
