@@ -77,7 +77,7 @@ bash inference_attn.sh
 > 3. **Output**: Results are saved in the `outputs` directory, including the VLM responses, layer graphs, and generated images in their respective subdirectories.
 > 4. **VLM Model**: We use Gemini 2.5 Pro for VLM reasoning because it provides reliable mask and bounding box detection. If attention control is disabled, other VLM models may also be suitable.
 
-### Limitations
+### 4. Limitations
 
 For complex input images (e.g., those with multiple top layers to remove), the inference script may fail to produce the desired output. In such cases, trying different random seeds and inference steps may help.
 
