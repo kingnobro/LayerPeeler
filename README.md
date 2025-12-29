@@ -13,7 +13,7 @@ LayerPeeler is a framework for layer-wise image vectorization that decomposes im
 - [x] **[2025.12.11]**: Dataset Released
 - [x] **[2025.12.11]**: Training Code Released 
 - [x] **[2025.12.14]**: Inference Code Released
-- [ ] Vectorization Code Released
+- [x] **[2025.12.29]**: Vectorization Code Released
 
 ## Setup
 
@@ -61,6 +61,7 @@ We provide a test set containing 250 images (with corresponding ground-truth SVG
 Run the inference script **without attention control**:
 
 ```bash
+cd inference
 bash inference.sh
 ```
 
@@ -80,6 +81,40 @@ bash inference_attn.sh
 ### 4. Limitations
 
 For complex input images (e.g., those with multiple top layers to remove), the inference script may fail to produce the desired output. In such cases, trying different random seeds and inference steps may help.
+
+## Vectorization
+
+### 1. Recraft API Setup
+
+We use [Recraft](https://www.recraft.ai/ai-image-vectorizer) to vectorize the visual differences between layered PNGs and merge them into a final SVG.
+We chose Recraft because it offers superior accuracy and stability compared to other vectorizers.
+**Note:** This API is not free. You must sign up for an account to obtain an API key.
+
+Add your Recraft API key to the `.env` file:
+
+```shell
+RECRAFT_API_KEY=<your_key>
+```
+
+### 2. Vectorization Scripts
+
+The vectorization code is located in the [`inference`](./inference) directory.
+
+```bash
+cd inference
+python vectorize.py --base_dir outputs/testset
+```
+
+This command processes all subfolders within `base_dir`. For each folder, it calculates the difference between consecutive layer PNGs (isolating the object removed in each step), vectorizes these differences, and merges them into a final combined SVG.
+
+> [!IMPORTANT]
+> **Tuning Extraction Parameters**
+>
+> 1. **Morphological Opening (`--morph_kernel_size`)**
+>    Since the image "before removal" and "after removal" are not guaranteed to be perfectly pixel-aligned, we use morphological opening to clean up small noise artifacts.
+>
+> 2. **Difference Threshold (`--diff_threshold`)**
+>    You may need to adjust this if the layer being removed has a color very similar to the background. A higher threshold reduces noise but might miss faint details.
 
 ## Training
 
