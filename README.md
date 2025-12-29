@@ -88,6 +88,7 @@ For complex input images (e.g., those with multiple top layers to remove), the i
 
 We use [Recraft](https://www.recraft.ai/ai-image-vectorizer) to vectorize the visual differences between layered PNGs and merge them into a final SVG.
 We chose Recraft because it offers superior accuracy and stability compared to other vectorizers.
+
 **Note:** This API is not free. You must sign up for an account to obtain an API key.
 
 Add your Recraft API key to the `.env` file:
@@ -110,11 +111,9 @@ This command processes all subfolders within `base_dir`. For each folder, it cal
 > [!IMPORTANT]
 > **Tuning Extraction Parameters**
 >
-> 1. **Morphological Opening (`--morph_kernel_size`)**
->    Since the image "before removal" and "after removal" are not guaranteed to be perfectly pixel-aligned, we use morphological opening to clean up small noise artifacts.
+> 1. **Morphological Opening (`--morph_kernel_size`)**: Since the image "before removal" and "after removal" are not guaranteed to be perfectly pixel-aligned, we use morphological opening to clean up small noise artifacts.
 >
-> 2. **Difference Threshold (`--diff_threshold`)**
->    You may need to adjust this if the layer being removed has a color very similar to the background. A higher threshold reduces noise but might miss faint details.
+> 2. **Difference Threshold (`--diff_threshold`)**: You may need to adjust this if the layer being removed has a color very similar to the background. A higher threshold reduces noise but might miss faint details.
 
 ## Training
 
